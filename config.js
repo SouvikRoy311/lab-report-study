@@ -1,3 +1,3 @@
 window.STUDY_CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwBurV2ud-WjHuR0S0gt1PKRZ6Q5rFEsuIsJwy0W4KP05NOVP5oI8gJ6yPycPfbvdvj/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycby56ENGo9qYjKCTVOqfU5BDdTf29q87TtuF786WSqYqBoMbJDvo3X8hP_kzg3rLRf_w/exec"
 };
