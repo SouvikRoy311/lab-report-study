@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab Report Interpretation Study</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+  <script src="assignments.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Department Study</p>
+        <h1>Lab Report Interpretation Study</h1>
+        <p class="subtitle">Balanced incomplete block experiment on laboratory report formats</p>
+      </div>
+      <div class="status-pill" id="statusPill">Not started</div>
+    </header>
+
+    <main class="main-grid">
+      <section class="card intro-card" id="introCard">
+        <h2>Welcome</h2>
+        <p>
+          You will see <strong>3 mock laboratory reports</strong>. For each report, answer 4 objective questions.
+          You do <strong>not</strong> need medical knowledge. Everything needed to answer is shown on the screen.
+        </p>
+
+        <div class="mini-grid">
+          <div class="info-box">
+            <h3>Time needed</h3>
+            <p>About 4 to 6 minutes</p>
+          </div>
+          <div class="info-box">
+            <h3>Your task</h3>
+            <p>Read the displayed ranges and interpret the current result correctly</p>
+          </div>
+        </div>
+
+        <div class="rule-box soft">
+          <h3>Study action rule</h3>
+          <table>
+            <thead>
+              <tr><th>Result category</th><th>Action class for this study</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Normal</td><td>Routine</td></tr>
+              <tr><td>Borderline</td><td>Discuss at regular follow-up</td></tr>
+              <tr><td>High or Very High</td><td>Prompt follow-up</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="consent-box">
+          <label class="check-row">
+            <input type="checkbox" id="consentCheckbox" />
+            <span>I agree to participate in this class project study.</span>
+          </label>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label for="participantId">Participant ID</label>
+            <input id="participantId" type="text" placeholder="Example: P01" />
+            <p class="help-text">Use the ID given by the researcher. If you are testing, use P01 to P48.</p>
+          </div>
+          <div>
+            <label for="participantName">Optional initials</label>
+            <input id="participantName" type="text" placeholder="Optional" />
+            <p class="help-text">This field is optional. Leave blank if you prefer.</p>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button id="startBtn" class="primary-btn">Start study</button>
+        </div>
+        <p id="introError" class="error-text"></p>
+      </section>
+
+      <section class="card study-card hidden" id="studyCard">
+        <div class="study-header">
+          <div>
+            <p class="eyebrow">Trial <span id="trialCounter">1</span> of 3</p>
+            <h2 id="caseTitle">Case title</h2>
+            <p id="caseSubtitle" class="subtitle"></p>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div id="progressFill"></div></div>
+            <p id="participantSummary" class="small-muted"></p>
+          </div>
+        </div>
+
+        <div class="rule-box sticky-rule">
+          <h3>Study action rule</h3>
+          <table>
+            <thead>
+              <tr><th>Result category</th><th>Action class for this study</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Normal</td><td>Routine</td></tr>
+              <tr><td>Borderline</td><td>Discuss at regular follow-up</td></tr>
+              <tr><td>High or Very High</td><td>Prompt follow-up</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-shell">
+          <div class="report-meta">
+            <div>
+              <p class="small-muted">Assigned format</p>
+              <h3 id="formatLabel">T1</h3>
+            </div>
+            <div>
+              <p class="small-muted">Current question type</p>
+              <h3>Interpret the current result</h3>
+            </div>
+          </div>
+          <div id="reportContainer"></div>
+        </div>
+
+        <form id="questionForm" class="question-form">
+          <div class="question-card">
+            <p class="question-title">1. What is the <strong>current</strong> result category?</p>
+            <div class="options-grid" id="q1Options"></div>
+          </div>
+
+          <div class="question-card">
+            <p class="question-title">2. Compared with the <strong>previous</strong> result, the current result is:</p>
+            <div class="options-grid" id="q2Options"></div>
+          </div>
+
+          <div class="question-card">
+            <p class="question-title">3. Is the <strong>current</strong> value inside the normal range?</p>
+            <div class="options-grid" id="q3Options"></div>
+          </div>
+
+          <div class="question-card primary-endpoint-card">
+            <p class="question-title">4. Based on the study rule shown above, what is the correct <strong>action class</strong>?</p>
+            <div class="options-grid" id="q4Options"></div>
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="primary-btn">Save and continue</button>
+          </div>
+          <p id="formError" class="error-text"></p>
+        </form>
+      </section>
+
+      <section class="card hidden" id="doneCard">
+        <h2>All done</h2>
+        <p>Thank you. Your responses have been packaged and a backup file has been downloaded to your device.</p>
+        <div class="mini-grid">
+          <div class="info-box">
+            <h3>Participant ID</h3>
+            <p id="doneParticipant"></p>
+          </div>
+          <div class="info-box">
+            <h3>Primary endpoint</h3>
+            <p>Correct action class on each trial</p>
+          </div>
+        </div>
+        <div class="button-row">
+          <button id="restartBtn" class="secondary-btn">Restart for testing</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <iframe name="submitFrame" id="submitFrame" class="hidden"></iframe>
+  <form id="hiddenSubmitForm" class="hidden" method="POST" target="submitFrame">
+    <input type="hidden" name="payload" id="payloadField" />
+  </form>
+
+  <script src="app.js"></script>
+</body>
+</html>
