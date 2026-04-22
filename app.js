@@ -1,13 +1,13 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-22-comparison-v1";
+const APP_VERSION = "2026-04-22-comparison-v2";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
-  T1: { code: "T1", name: "Plain table", short: "Plain numeric table" },
-  T2: { code: "T2", name: "Table + flags", short: "Numeric table with category flags" },
-  T3: { code: "T3", name: "Visual range bar", short: "Horizontal range bar" },
-  T4: { code: "T4", name: "Range bar + cue", short: "Range bar with neutral interpretive cue" }
+  T1: { code: "T1", name: "Plain table" },
+  T2: { code: "T2", name: "Table + flags" },
+  T3: { code: "T3", name: "Visual range bar" },
+  T4: { code: "T4", name: "Range bar + cue" }
 };
 
 const QUESTION_OPTIONS = {
@@ -25,31 +25,16 @@ const CASES = {
     testName: "Thyroid Stimulating Hormone (TSH)",
     unit: "mIU/L",
     categories: [
-      { label: "Normal", code: "N", min: 0.4, max: 4.0, color: "normal" },
-      { label: "Borderline", code: "B", min: 4.1, max: 10.0, color: "borderline" },
-      { label: "High", code: "H", min: 10.1, max: 20.0, color: "high" },
-      { label: "Very High", code: "VH", min: 20.1, max: 30.0, color: "very-high" }
+      { label: "Normal", code: "N", min: 0.4, max: 4.0 },
+      { label: "Borderline", code: "B", min: 4.1, max: 10.0 },
+      { label: "High", code: "H", min: 10.1, max: 20.0 },
+      { label: "Very High", code: "VH", min: 20.1, max: 30.0 }
     ],
     patients: [
-      {
-        label: "Patient 1",
-        previous: 4.5,
-        current: 4.8,
-        cue: "Current value remains borderline and has increased from the previous value."
-      },
-      {
-        label: "Patient 2",
-        previous: 5.5,
-        current: 5.7,
-        cue: "Current value remains borderline and has increased slightly from the previous value."
-      }
+      { label: "Patient 1", previous: 4.5, current: 4.8, cue: "Current value remains borderline and has increased from the previous value." },
+      { label: "Patient 2", previous: 5.5, current: 5.7, cue: "Current value remains borderline and has increased slightly from the previous value." }
     ],
-    answers: {
-      q1: "Same",
-      q2: "Patient 1",
-      q3: "Numerical change tie-breaker",
-      q4: "Patient 1"
-    }
+    answers: { q1: "Same", q2: "Patient 1", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   },
   A: {
     caseId: "A",
@@ -58,31 +43,16 @@ const CASES = {
     testName: "Fasting Glucose",
     unit: "mg/dL",
     categories: [
-      { label: "Normal", code: "N", min: 70, max: 99, color: "normal" },
-      { label: "Borderline", code: "B", min: 100, max: 125, color: "borderline" },
-      { label: "High", code: "H", min: 126, max: 199, color: "high" },
-      { label: "Very High", code: "VH", min: 200, max: 260, color: "very-high" }
+      { label: "Normal", code: "N", min: 70, max: 99 },
+      { label: "Borderline", code: "B", min: 100, max: 125 },
+      { label: "High", code: "H", min: 126, max: 199 },
+      { label: "Very High", code: "VH", min: 200, max: 260 }
     ],
     patients: [
-      {
-        label: "Patient 1",
-        previous: 98,
-        current: 102,
-        cue: "Current value moved from normal to borderline range."
-      },
-      {
-        label: "Patient 2",
-        previous: 105,
-        current: 99,
-        cue: "Current value moved from borderline back into normal range."
-      }
+      { label: "Patient 1", previous: 98, current: 102, cue: "Current value moved from normal to borderline range." },
+      { label: "Patient 2", previous: 105, current: 99, cue: "Current value moved from borderline back into normal range." }
     ],
-    answers: {
-      q1: "Patient 1",
-      q2: "Patient 1",
-      q3: "Current category",
-      q4: "Patient 1"
-    }
+    answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
   },
   B: {
     caseId: "B",
@@ -91,31 +61,16 @@ const CASES = {
     testName: "Hemoglobin A1C",
     unit: "%",
     categories: [
-      { label: "Normal", code: "N", min: 4.5, max: 5.6, color: "normal" },
-      { label: "Borderline", code: "B", min: 5.7, max: 6.4, color: "borderline" },
-      { label: "High", code: "H", min: 6.5, max: 8.0, color: "high" },
-      { label: "Very High", code: "VH", min: 8.1, max: 10.0, color: "very-high" }
+      { label: "Normal", code: "N", min: 4.5, max: 5.6 },
+      { label: "Borderline", code: "B", min: 5.7, max: 6.4 },
+      { label: "High", code: "H", min: 6.5, max: 8.0 },
+      { label: "Very High", code: "VH", min: 8.1, max: 10.0 }
     ],
     patients: [
-      {
-        label: "Patient 1",
-        previous: 6.3,
-        current: 6.1,
-        cue: "Current value remains borderline but has improved compared with the previous value."
-      },
-      {
-        label: "Patient 2",
-        previous: 5.8,
-        current: 6.0,
-        cue: "Current value remains borderline and has worsened compared with the previous value."
-      }
+      { label: "Patient 1", previous: 6.3, current: 6.1, cue: "Current value remains borderline but has improved compared with the previous value." },
+      { label: "Patient 2", previous: 5.8, current: 6.0, cue: "Current value remains borderline and has worsened compared with the previous value." }
     ],
-    answers: {
-      q1: "Same",
-      q2: "Patient 2",
-      q3: "Trend",
-      q4: "Patient 2"
-    }
+    answers: { q1: "Same", q2: "Patient 2", q3: "Trend", q4: "Patient 2" }
   },
   C: {
     caseId: "C",
@@ -124,31 +79,16 @@ const CASES = {
     testName: "LDL Cholesterol",
     unit: "mg/dL",
     categories: [
-      { label: "Normal", code: "N", min: 40, max: 99, color: "normal" },
-      { label: "Borderline", code: "B", min: 100, max: 159, color: "borderline" },
-      { label: "High", code: "H", min: 160, max: 189, color: "high" },
-      { label: "Very High", code: "VH", min: 190, max: 260, color: "very-high" }
+      { label: "Normal", code: "N", min: 40, max: 99 },
+      { label: "Borderline", code: "B", min: 100, max: 159 },
+      { label: "High", code: "H", min: 160, max: 189 },
+      { label: "Very High", code: "VH", min: 190, max: 260 }
     ],
     patients: [
-      {
-        label: "Patient 1",
-        previous: 185,
-        current: 195,
-        cue: "Current value moved from high into very high range."
-      },
-      {
-        label: "Patient 2",
-        previous: 165,
-        current: 175,
-        cue: "Current value remains in the high range and is above the previous value."
-      }
+      { label: "Patient 1", previous: 185, current: 195, cue: "Current value moved from high into very high range." },
+      { label: "Patient 2", previous: 165, current: 175, cue: "Current value remains in the high range and is above the previous value." }
     ],
-    answers: {
-      q1: "Patient 1",
-      q2: "Patient 1",
-      q3: "Current category",
-      q4: "Patient 1"
-    }
+    answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
   }
 };
 
@@ -214,9 +154,7 @@ function getAssignment(participantId) {
 
 function categoryForValue(value, categories) {
   for (const cat of categories) {
-    if (value >= cat.min && value <= cat.max) {
-      return cat;
-    }
+    if (value >= cat.min && value <= cat.max) return cat;
   }
   return categories[categories.length - 1];
 }
@@ -225,10 +163,6 @@ function trendLabel(previous, current) {
   if (current > previous) return "Worsening";
   if (current < previous) return "Improving";
   return "Stable";
-}
-
-function numericDelta(previous, current) {
-  return +(current - previous).toFixed(3);
 }
 
 function swatchClass(label) {
@@ -244,14 +178,15 @@ function rangeBounds(categories, patients) {
   const maxs = categories.map(x => x.max);
   const values = [];
   patients.forEach(p => values.push(p.previous, p.current));
-  return {
-    min: Math.min(...mins, ...values),
-    max: Math.max(...maxs, ...values)
-  };
+  return { min: Math.min(...mins, ...values), max: Math.max(...maxs, ...values) };
 }
 
 function valueToPercent(value, min, max) {
   return ((value - min) / (max - min)) * 100;
+}
+
+function formatNumber(value) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
 function buildOptionButtons(container, qKey, options) {
@@ -271,19 +206,18 @@ function buildOptionButtons(container, qKey, options) {
   });
 }
 
-function formatNumber(value) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
-
 function renderPlainTable(caseData, withFlags = false) {
   const rangeText = caseData.categories.map(c => `${c.label}: ${formatNumber(c.min)}–${formatNumber(c.max)}`).join(" · ");
-  const cards = caseData.patients.map((patient, idx) => {
+  const cards = caseData.patients.map(patient => {
     const currentCat = categoryForValue(patient.current, caseData.categories);
+    const trend = trendLabel(patient.previous, patient.current);
     return `
       <div class="patient-card patient-card-table">
         <div class="patient-head">
-          <h3>${patient.label}</h3>
-          <p class="small-muted no-margin">${caseData.testName}</p>
+          <div>
+            <h3>${patient.label}</h3>
+            <p class="small-muted no-margin">${caseData.testName}</p>
+          </div>
         </div>
         <table class="lab-table compact-table">
           <thead>
@@ -303,6 +237,10 @@ function renderPlainTable(caseData, withFlags = false) {
             </tr>
           </tbody>
         </table>
+        <div class="stats-grid compact-gap">
+          <div><span class="stat-k">Current category</span><span class="stat-v">${currentCat.label}</span></div>
+          <div><span class="stat-k">Trend</span><span class="stat-v">${trend}</span></div>
+        </div>
         <p class="small-muted range-text"><strong>Displayed ranges:</strong> ${rangeText}</p>
       </div>
     `;
@@ -321,12 +259,15 @@ function renderRangePair(caseData, withCue = false) {
     const previousPct = valueToPercent(patient.previous, bounds.min, bounds.max);
     const currentPct = valueToPercent(patient.current, bounds.min, bounds.max);
     const currentCat = categoryForValue(patient.current, caseData.categories);
+    const trend = trendLabel(patient.previous, patient.current);
     const legend = caseData.categories.map(cat => `<span class="legend-chip"><span class="swatch swatch-${swatchClass(cat.label)}"></span>${cat.label}</span>`).join("");
     return `
       <div class="patient-card patient-card-range">
         <div class="patient-head">
-          <h3>${patient.label}</h3>
-          <p class="small-muted no-margin">${caseData.testName}</p>
+          <div>
+            <h3>${patient.label}</h3>
+            <p class="small-muted no-margin">${caseData.testName}</p>
+          </div>
         </div>
         <div class="range-bar-wrap">
           <div class="range-bar">${segments}</div>
@@ -334,13 +275,13 @@ function renderRangePair(caseData, withCue = false) {
           <div class="marker current" style="left:${currentPct}%"></div>
           <div class="marker-label prev-label" style="left:${previousPct}%">Prev ${formatNumber(patient.previous)}</div>
           <div class="marker-label curr-label" style="left:${currentPct}%">Curr ${formatNumber(patient.current)}</div>
-          <div class="legend-row">${legend}</div>
         </div>
-        <div class="stats-grid">
+        <div class="legend-row">${legend}</div>
+        <div class="stats-grid compact-gap">
           <div><span class="stat-k">Current category</span><span class="stat-v">${currentCat.label}</span></div>
-          <div><span class="stat-k">Trend</span><span class="stat-v">${trendLabel(patient.previous, patient.current)}</span></div>
+          <div><span class="stat-k">Trend</span><span class="stat-v">${trend}</span></div>
         </div>
-        ${withCue ? `<div class="cue-box"><strong>Interpretive cue</strong>${patient.cue}</div>` : ""}
+        ${withCue ? `<div class="cue-box"><strong>Interpretive cue</strong><p class="no-margin">${patient.cue}</p></div>` : ""}
       </div>
     `;
   }).join("");
@@ -359,9 +300,7 @@ function updateStudyStatus(text) {
 }
 
 function getCurrentTrialDescriptor() {
-  if (state.inPractice) {
-    return { isPractice: true, format: "T3", caseId: "P", trialNumber: 0 };
-  }
+  if (state.inPractice) return { isPractice: true, format: "T3", caseId: "P", trialNumber: 0 };
   return state.assignment.trials[state.trialIndex];
 }
 
@@ -382,7 +321,7 @@ function renderCurrentStage() {
   renderQuestionOptions();
 
   els.phaseLabel.textContent = state.inPractice ? "Practice" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
-  els.trialCounter.textContent = state.inPractice ? "not recorded" : `${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  if (els.trialCounter) els.trialCounter.textContent = state.inPractice ? "Practice only — not recorded" : `Recorded trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
   els.caseTitle.textContent = caseData.title;
   els.caseSubtitle.textContent = caseData.subtitle;
   els.formatLabel.textContent = `${formatInfo.code} — ${formatInfo.name}`;
@@ -455,7 +394,7 @@ function downloadBackup(payload) {
 
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-comparison-bibd-v1",
+    studyId: "lab-report-comparison-bibd-v2",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
@@ -546,5 +485,4 @@ function handleRestart() {
 els.startBtn.addEventListener("click", handleStart);
 els.questionForm.addEventListener("submit", handleTrialSubmit);
 els.restartBtn.addEventListener("click", handleRestart);
-
-updateStudyStatus("Ready");
+updateStudyStatus("Ready to start");
