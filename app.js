@@ -1,91 +1,163 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
+const APP_VERSION = "2026-04-22-comparison-v1";
+const TOTAL_REAL_TRIALS = 3;
+
 const FORMAT_META = {
   T1: { code: "T1", name: "Plain table", short: "Plain numeric table" },
-  T2: { code: "T2", name: "Table + flag", short: "Numeric table with category flag" },
+  T2: { code: "T2", name: "Table + flags", short: "Numeric table with category flags" },
   T3: { code: "T3", name: "Visual range bar", short: "Horizontal range bar" },
-  T4: { code: "T4", name: "Range bar + cue", short: "Range bar with interpretive cue" }
+  T4: { code: "T4", name: "Range bar + cue", short: "Range bar with neutral interpretive cue" }
+};
+
+const QUESTION_OPTIONS = {
+  q1: ["Patient 1", "Patient 2", "Same"],
+  q2: ["Patient 1", "Patient 2", "Same"],
+  q3: ["Current category", "Trend", "Numerical change tie-breaker"],
+  q4: ["Patient 1", "Patient 2", "Same priority"]
 };
 
 const CASES = {
+  P: {
+    caseId: "P",
+    title: "Practice — Thyroid Stimulating Hormone",
+    subtitle: "Practice only. Learn the rule before the recorded trials begin.",
+    testName: "Thyroid Stimulating Hormone (TSH)",
+    unit: "mIU/L",
+    categories: [
+      { label: "Normal", code: "N", min: 0.4, max: 4.0, color: "normal" },
+      { label: "Borderline", code: "B", min: 4.1, max: 10.0, color: "borderline" },
+      { label: "High", code: "H", min: 10.1, max: 20.0, color: "high" },
+      { label: "Very High", code: "VH", min: 20.1, max: 30.0, color: "very-high" }
+    ],
+    patients: [
+      {
+        label: "Patient 1",
+        previous: 4.5,
+        current: 4.8,
+        cue: "Current value remains borderline and has increased from the previous value."
+      },
+      {
+        label: "Patient 2",
+        previous: 5.5,
+        current: 5.7,
+        cue: "Current value remains borderline and has increased slightly from the previous value."
+      }
+    ],
+    answers: {
+      q1: "Same",
+      q2: "Patient 1",
+      q3: "Numerical change tie-breaker",
+      q4: "Patient 1"
+    }
+  },
   A: {
     caseId: "A",
     title: "Case A — Fasting Glucose",
-    subtitle: "Borderline case. The current value is just outside the normal range.",
+    subtitle: "Borderline case. Category movement determines the priority.",
     testName: "Fasting Glucose",
     unit: "mg/dL",
-    previousValue: 97,
-    currentValue: 101,
     categories: [
-      { label: "Normal", min: 70, max: 99, color: "normal" },
-      { label: "Borderline", min: 100, max: 125, color: "borderline" },
-      { label: "High", min: 126, max: 160, color: "high" }
+      { label: "Normal", code: "N", min: 70, max: 99, color: "normal" },
+      { label: "Borderline", code: "B", min: 100, max: 125, color: "borderline" },
+      { label: "High", code: "H", min: 126, max: 199, color: "high" },
+      { label: "Very High", code: "VH", min: 200, max: 260, color: "very-high" }
     ],
-    cueText: "Current value is slightly above the normal range.",
+    patients: [
+      {
+        label: "Patient 1",
+        previous: 98,
+        current: 102,
+        cue: "Current value moved from normal to borderline range."
+      },
+      {
+        label: "Patient 2",
+        previous: 105,
+        current: 99,
+        cue: "Current value moved from borderline back into normal range."
+      }
+    ],
     answers: {
-      q1: "Borderline",
-      q2: "Worse",
-      q3: "No",
-      q4: "Discuss at regular follow-up"
+      q1: "Patient 1",
+      q2: "Patient 1",
+      q3: "Current category",
+      q4: "Patient 1"
     }
   },
   B: {
     caseId: "B",
     title: "Case B — Hemoglobin A1C",
-    subtitle: "Borderline but improving. The current value remains outside the normal range.",
+    subtitle: "Both patients are currently borderline. Trend breaks the tie.",
     testName: "Hemoglobin A1C",
     unit: "%",
-    previousValue: 6.4,
-    currentValue: 6.2,
     categories: [
-      { label: "Normal", min: 4.5, max: 5.6, color: "normal" },
-      { label: "Borderline", min: 5.7, max: 6.4, color: "borderline" },
-      { label: "High", min: 6.5, max: 8.0, color: "high" }
+      { label: "Normal", code: "N", min: 4.5, max: 5.6, color: "normal" },
+      { label: "Borderline", code: "B", min: 5.7, max: 6.4, color: "borderline" },
+      { label: "High", code: "H", min: 6.5, max: 8.0, color: "high" },
+      { label: "Very High", code: "VH", min: 8.1, max: 10.0, color: "very-high" }
     ],
-    cueText: "Current value is still above normal, but better than the previous value.",
+    patients: [
+      {
+        label: "Patient 1",
+        previous: 6.3,
+        current: 6.1,
+        cue: "Current value remains borderline but has improved compared with the previous value."
+      },
+      {
+        label: "Patient 2",
+        previous: 5.8,
+        current: 6.0,
+        cue: "Current value remains borderline and has worsened compared with the previous value."
+      }
+    ],
     answers: {
-      q1: "Borderline",
-      q2: "Better",
-      q3: "No",
-      q4: "Discuss at regular follow-up"
+      q1: "Same",
+      q2: "Patient 2",
+      q3: "Trend",
+      q4: "Patient 2"
     }
   },
   C: {
     caseId: "C",
     title: "Case C — LDL Cholesterol",
-    subtitle: "Clearly abnormal case. The current value is well above target.",
+    subtitle: "Both patients are worsening, but one enters the highest severity band.",
     testName: "LDL Cholesterol",
     unit: "mg/dL",
-    previousValue: 172,
-    currentValue: 182,
     categories: [
-      { label: "Normal", min: 40, max: 99, color: "normal" },
-      { label: "Borderline", min: 130, max: 159, color: "borderline" },
-      { label: "High", min: 160, max: 189, color: "high" },
-      { label: "Very High", min: 190, max: 220, color: "high" }
+      { label: "Normal", code: "N", min: 40, max: 99, color: "normal" },
+      { label: "Borderline", code: "B", min: 100, max: 159, color: "borderline" },
+      { label: "High", code: "H", min: 160, max: 189, color: "high" },
+      { label: "Very High", code: "VH", min: 190, max: 260, color: "very-high" }
     ],
-    cueText: "Current value is well above the target range.",
+    patients: [
+      {
+        label: "Patient 1",
+        previous: 185,
+        current: 195,
+        cue: "Current value moved from high into very high range."
+      },
+      {
+        label: "Patient 2",
+        previous: 165,
+        current: 175,
+        cue: "Current value remains in the high range and is above the previous value."
+      }
+    ],
     answers: {
-      q1: "High",
-      q2: "Worse",
-      q3: "No",
-      q4: "Prompt follow-up"
+      q1: "Patient 1",
+      q2: "Patient 1",
+      q3: "Current category",
+      q4: "Patient 1"
     }
   }
-};
-
-const QUESTION_OPTIONS = {
-  q1: ["Normal", "Borderline", "High"],
-  q2: ["Better", "Same", "Worse"],
-  q3: ["Yes", "No"],
-  q4: ["Routine", "Discuss at regular follow-up", "Prompt follow-up"]
 };
 
 const state = {
   participantId: null,
   participantInitials: "",
   assignment: null,
-  trialIndex: 0,
+  trialIndex: -1,
+  inPractice: true,
   trialStart: null,
   responses: []
 };
@@ -100,18 +172,22 @@ const els = {
   participantName: document.getElementById("participantName"),
   startBtn: document.getElementById("startBtn"),
   introError: document.getElementById("introError"),
+  phaseLabel: document.getElementById("phaseLabel"),
+  practiceBanner: document.getElementById("practiceBanner"),
   trialCounter: document.getElementById("trialCounter"),
   caseTitle: document.getElementById("caseTitle"),
   caseSubtitle: document.getElementById("caseSubtitle"),
   progressFill: document.getElementById("progressFill"),
   participantSummary: document.getElementById("participantSummary"),
   formatLabel: document.getElementById("formatLabel"),
+  timerBadge: document.getElementById("timerBadge"),
   reportContainer: document.getElementById("reportContainer"),
   q1Options: document.getElementById("q1Options"),
   q2Options: document.getElementById("q2Options"),
   q3Options: document.getElementById("q3Options"),
   q4Options: document.getElementById("q4Options"),
   questionForm: document.getElementById("questionForm"),
+  nextBtn: document.getElementById("nextBtn"),
   formError: document.getElementById("formError"),
   doneParticipant: document.getElementById("doneParticipant"),
   restartBtn: document.getElementById("restartBtn"),
@@ -132,6 +208,52 @@ function normalizeParticipantId(value) {
   return `P${String(normalized).padStart(2, "0")}`;
 }
 
+function getAssignment(participantId) {
+  return ASSIGNMENT_LOOKUP[participantId] || null;
+}
+
+function categoryForValue(value, categories) {
+  for (const cat of categories) {
+    if (value >= cat.min && value <= cat.max) {
+      return cat;
+    }
+  }
+  return categories[categories.length - 1];
+}
+
+function trendLabel(previous, current) {
+  if (current > previous) return "Worsening";
+  if (current < previous) return "Improving";
+  return "Stable";
+}
+
+function numericDelta(previous, current) {
+  return +(current - previous).toFixed(3);
+}
+
+function swatchClass(label) {
+  const lower = label.toLowerCase();
+  if (lower.includes("very")) return "very-high";
+  if (lower.includes("high")) return "high";
+  if (lower.includes("border")) return "borderline";
+  return "normal";
+}
+
+function rangeBounds(categories, patients) {
+  const mins = categories.map(x => x.min);
+  const maxs = categories.map(x => x.max);
+  const values = [];
+  patients.forEach(p => values.push(p.previous, p.current));
+  return {
+    min: Math.min(...mins, ...values),
+    max: Math.max(...maxs, ...values)
+  };
+}
+
+function valueToPercent(value, min, max) {
+  return ((value - min) / (max - min)) * 100;
+}
+
 function buildOptionButtons(container, qKey, options) {
   container.innerHTML = "";
   options.forEach(option => {
@@ -149,177 +271,141 @@ function buildOptionButtons(container, qKey, options) {
   });
 }
 
-function getCurrentTrial() {
-  return state.assignment.trials[state.trialIndex];
+function formatNumber(value) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
-function getCase(caseId) {
-  return CASES[caseId];
-}
-
-function rangeBounds(categories, previousValue, currentValue) {
-  const mins = categories.map(x => x.min);
-  const maxs = categories.map(x => x.max);
-  return {
-    min: Math.min(...mins, previousValue, currentValue),
-    max: Math.max(...maxs, previousValue, currentValue)
-  };
-}
-
-function valueToPercent(value, min, max) {
-  return ((value - min) / (max - min)) * 100;
-}
-
-function getCategory(value, categories) {
-  for (const cat of categories) {
-    if (value >= cat.min && value <= cat.max) {
-      if (cat.label === "Borderline") return { label: "Borderline", short: "B" };
-      if (cat.label === "Normal") return { label: "Normal", short: "N" };
-      return { label: "High", short: cat.label === "Very High" ? "VH" : "H" };
-    }
-  }
-  return { label: "High", short: "H" };
-}
-
-function renderTable(caseData, withFlag = false) {
-  const flag = getCategory(caseData.currentValue, caseData.categories);
-  const rangeText = caseData.categories.map(c => `${c.label}: ${c.min}–${c.max}`).join(" · ");
-  return `
-    <div class="report-card">
-      <div class="report-heading">
-        <div>
-          <h3>${caseData.testName}</h3>
-          <p class="small-muted">Read the current value using the displayed ranges.</p>
+function renderPlainTable(caseData, withFlags = false) {
+  const rangeText = caseData.categories.map(c => `${c.label}: ${formatNumber(c.min)}–${formatNumber(c.max)}`).join(" · ");
+  const cards = caseData.patients.map((patient, idx) => {
+    const currentCat = categoryForValue(patient.current, caseData.categories);
+    return `
+      <div class="patient-card patient-card-table">
+        <div class="patient-head">
+          <h3>${patient.label}</h3>
+          <p class="small-muted no-margin">${caseData.testName}</p>
         </div>
-        <div class="format-badge">${withFlag ? "Table + flag" : "Plain table"}</div>
+        <table class="lab-table compact-table">
+          <thead>
+            <tr>
+              <th>Previous</th>
+              <th>Current</th>
+              <th>Unit</th>
+              ${withFlags ? "<th>Flag</th>" : ""}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${formatNumber(patient.previous)}</td>
+              <td><strong>${formatNumber(patient.current)}</strong></td>
+              <td>${caseData.unit}</td>
+              ${withFlags ? `<td><span class="flag-badge flag-${currentCat.code}">${currentCat.code}</span></td>` : ""}
+            </tr>
+          </tbody>
+        </table>
+        <p class="small-muted range-text"><strong>Displayed ranges:</strong> ${rangeText}</p>
       </div>
-      <table class="lab-table">
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Previous</th>
-            <th>Current</th>
-            <th>Unit</th>
-            <th>Displayed ranges</th>
-            ${withFlag ? "<th>Flag</th>" : ""}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>${caseData.testName}</strong></td>
-            <td>${caseData.previousValue}</td>
-            <td><strong>${caseData.currentValue}</strong></td>
-            <td>${caseData.unit}</td>
-            <td>${rangeText}</td>
-            ${withFlag ? `<td><span class="flag-badge flag-${flag.short}">${flag.short}</span></td>` : ""}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  `;
+    `;
+  }).join("");
+  return `<div class="pair-shell pair-table">${cards}</div>`;
 }
 
-function swatchClass(label) {
-  const lower = label.toLowerCase();
-  if (lower.includes("normal")) return "normal";
-  if (lower.includes("border")) return "borderline";
-  return "high";
-}
-
-function renderRangeBar(caseData, withCue = false) {
-  const bounds = rangeBounds(caseData.categories, caseData.previousValue, caseData.currentValue);
+function renderRangePair(caseData, withCue = false) {
+  const bounds = rangeBounds(caseData.categories, caseData.patients);
   const total = bounds.max - bounds.min;
-  const segments = caseData.categories.map(cat => {
-    const width = ((cat.max - cat.min) / total) * 100;
-    const cls = cat.label.toLowerCase().replace(/\s+/g, "-");
-    return `<div class="range-segment seg-${cls}" style="width:${width}%"></div>`;
-  }).join("");
-
-  const legends = caseData.categories.map(cat => {
-    return `<span class="legend-chip"><span class="swatch swatch-${swatchClass(cat.label)}"></span>${cat.label}: ${cat.min}–${cat.max}</span>`;
-  }).join("");
-
-  const previousPct = valueToPercent(caseData.previousValue, bounds.min, bounds.max);
-  const currentPct = valueToPercent(caseData.currentValue, bounds.min, bounds.max);
-
-  return `
-    <div class="report-card">
-      <div class="report-heading">
-        <div>
-          <h3>${caseData.testName}</h3>
-          <p class="small-muted">The bar shows where the value lies relative to the displayed ranges.</p>
+  const cards = caseData.patients.map(patient => {
+    const segments = caseData.categories.map(cat => {
+      const width = ((cat.max - cat.min) / total) * 100;
+      return `<div class="range-segment seg-${swatchClass(cat.label)}" style="width:${width}%"></div>`;
+    }).join("");
+    const previousPct = valueToPercent(patient.previous, bounds.min, bounds.max);
+    const currentPct = valueToPercent(patient.current, bounds.min, bounds.max);
+    const currentCat = categoryForValue(patient.current, caseData.categories);
+    const legend = caseData.categories.map(cat => `<span class="legend-chip"><span class="swatch swatch-${swatchClass(cat.label)}"></span>${cat.label}</span>`).join("");
+    return `
+      <div class="patient-card patient-card-range">
+        <div class="patient-head">
+          <h3>${patient.label}</h3>
+          <p class="small-muted no-margin">${caseData.testName}</p>
         </div>
-        <div class="format-badge">${withCue ? "Range bar + cue" : "Visual range bar"}</div>
-      </div>
-      <div class="range-stack">
-        <div class="range-row">
-          <div class="range-label">
-            <strong>${caseData.testName}</strong>
-            <span class="small-muted">Unit: ${caseData.unit}</span>
-          </div>
-          <div class="range-bar-wrap">
-            <div class="range-bar">${segments}</div>
-            <div class="marker previous" style="left:${previousPct}%"></div>
-            <div class="marker current" style="left:${currentPct}%"></div>
-            <div class="marker-label" style="left:${previousPct}%">Prev: ${caseData.previousValue}</div>
-            <div class="marker-label" style="left:${currentPct}%; top: 26px;">Curr: ${caseData.currentValue}</div>
-            <div class="legend-row">${legends}</div>
-          </div>
-          <div class="small-muted">
-            <div><strong>Previous:</strong> ${caseData.previousValue} ${caseData.unit}</div>
-            <div><strong>Current:</strong> ${caseData.currentValue} ${caseData.unit}</div>
-          </div>
+        <div class="range-bar-wrap">
+          <div class="range-bar">${segments}</div>
+          <div class="marker previous" style="left:${previousPct}%"></div>
+          <div class="marker current" style="left:${currentPct}%"></div>
+          <div class="marker-label prev-label" style="left:${previousPct}%">Prev ${formatNumber(patient.previous)}</div>
+          <div class="marker-label curr-label" style="left:${currentPct}%">Curr ${formatNumber(patient.current)}</div>
+          <div class="legend-row">${legend}</div>
         </div>
+        <div class="stats-grid">
+          <div><span class="stat-k">Current category</span><span class="stat-v">${currentCat.label}</span></div>
+          <div><span class="stat-k">Trend</span><span class="stat-v">${trendLabel(patient.previous, patient.current)}</span></div>
+        </div>
+        ${withCue ? `<div class="cue-box"><strong>Interpretive cue</strong>${patient.cue}</div>` : ""}
       </div>
-      ${withCue ? `<div class="cue-box"><strong>Interpretive cue</strong>${caseData.cueText}</div>` : ""}
-    </div>
-  `;
+    `;
+  }).join("");
+  return `<div class="pair-shell pair-range">${cards}</div>`;
 }
 
-function renderReport(formatCode, caseData) {
-  if (formatCode === "T1") return renderTable(caseData, false);
-  if (formatCode === "T2") return renderTable(caseData, true);
-  if (formatCode === "T3") return renderRangeBar(caseData, false);
-  return renderRangeBar(caseData, true);
+function renderReports(formatCode, caseData) {
+  if (formatCode === "T1") return renderPlainTable(caseData, false);
+  if (formatCode === "T2") return renderPlainTable(caseData, true);
+  if (formatCode === "T3") return renderRangePair(caseData, false);
+  return renderRangePair(caseData, true);
 }
 
 function updateStudyStatus(text) {
   els.statusPill.textContent = text;
 }
 
-function renderTrial() {
-  const trial = getCurrentTrial();
-  const caseData = getCase(trial.caseId);
-  const formatInfo = FORMAT_META[trial.format];
+function getCurrentTrialDescriptor() {
+  if (state.inPractice) {
+    return { isPractice: true, format: "T3", caseId: "P", trialNumber: 0 };
+  }
+  return state.assignment.trials[state.trialIndex];
+}
 
-  selectedAnswers = { q1: null, q2: null, q3: null, q4: null };
-  els.formError.textContent = "";
-
-  els.trialCounter.textContent = String(state.trialIndex + 1);
-  els.caseTitle.textContent = caseData.title;
-  els.caseSubtitle.textContent = caseData.subtitle;
-  els.progressFill.style.width = `${((state.trialIndex + 1) / 3) * 100}%`;
-  els.participantSummary.textContent = `${state.participantId} · block ${state.assignment.blockGroup} · formats ${state.assignment.formatSet.join(", ")}`;
-  els.formatLabel.textContent = `${formatInfo.code} — ${formatInfo.name}`;
-  els.reportContainer.innerHTML = renderReport(trial.format, caseData);
-
+function renderQuestionOptions() {
   buildOptionButtons(els.q1Options, "q1", QUESTION_OPTIONS.q1);
   buildOptionButtons(els.q2Options, "q2", QUESTION_OPTIONS.q2);
   buildOptionButtons(els.q3Options, "q3", QUESTION_OPTIONS.q3);
   buildOptionButtons(els.q4Options, "q4", QUESTION_OPTIONS.q4);
+}
+
+function renderCurrentStage() {
+  const trial = getCurrentTrialDescriptor();
+  const caseData = CASES[trial.caseId];
+  const formatInfo = FORMAT_META[trial.format];
+
+  selectedAnswers = { q1: null, q2: null, q3: null, q4: null };
+  els.formError.textContent = "";
+  renderQuestionOptions();
+
+  els.phaseLabel.textContent = state.inPractice ? "Practice" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  els.trialCounter.textContent = state.inPractice ? "not recorded" : `${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  els.caseTitle.textContent = caseData.title;
+  els.caseSubtitle.textContent = caseData.subtitle;
+  els.formatLabel.textContent = `${formatInfo.code} — ${formatInfo.name}`;
+  els.timerBadge.textContent = state.inPractice ? "Practice only. Response time is not stored." : "Response time is being recorded.";
+  els.reportContainer.innerHTML = renderReports(trial.format, caseData);
+  els.practiceBanner.classList.toggle("hidden", !state.inPractice);
+  els.participantSummary.textContent = `${state.participantId} · block ${state.assignment.blockGroup} · formats ${state.assignment.formatSet.join(", ")}`;
+  els.progressFill.style.width = state.inPractice ? "12%" : `${((state.trialIndex + 1) / TOTAL_REAL_TRIALS) * 100}%`;
+  els.nextBtn.textContent = state.inPractice ? "Begin recorded trials" : (state.trialIndex === TOTAL_REAL_TRIALS - 1 ? "Submit study" : "Continue");
 
   state.trialStart = performance.now();
-  updateStudyStatus(`Trial ${state.trialIndex + 1} of 3`);
+  updateStudyStatus(state.inPractice ? "Practice trial" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`);
 }
 
 function scoreTrial(trial, answers, rtMs) {
-  const caseData = getCase(trial.caseId);
+  const caseData = CASES[trial.caseId];
   const correctness = {
     q1: answers.q1 === caseData.answers.q1 ? 1 : 0,
     q2: answers.q2 === caseData.answers.q2 ? 1 : 0,
     q3: answers.q3 === caseData.answers.q3 ? 1 : 0,
     q4: answers.q4 === caseData.answers.q4 ? 1 : 0
   };
+
   return {
     participantId: state.participantId,
     participantInitials: state.participantInitials,
@@ -335,28 +421,16 @@ function scoreTrial(trial, answers, rtMs) {
     responseTimeMs: Math.round(rtMs),
     responseTimeSec: +(rtMs / 1000).toFixed(3),
     q1_response: answers.q1,
-    q2_response: answers.q2,
-    q3_response: answers.q3,
-    q4_response: answers.q4,
     q1_correct: correctness.q1,
+    q2_response: answers.q2,
     q2_correct: correctness.q2,
+    q3_response: answers.q3,
     q3_correct: correctness.q3,
+    q4_response: answers.q4,
     q4_correct: correctness.q4,
     totalScore: correctness.q1 + correctness.q2 + correctness.q3 + correctness.q4,
     submittedAtClient: new Date().toISOString()
   };
-}
-
-function downloadBackup(payload) {
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${state.participantId}_lab_report_study_backup.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
 }
 
 function submitToAppsScript(payload) {
@@ -367,9 +441,21 @@ function submitToAppsScript(payload) {
   els.hiddenSubmitForm.submit();
 }
 
+function downloadBackup(payload) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${state.participantId}_lab_report_comparison_backup.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-bibd-v1",
+    studyId: "lab-report-comparison-bibd-v1",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
@@ -377,7 +463,7 @@ function finishStudy() {
     orderPattern: state.assignment.orderPattern,
     mappingPattern: state.assignment.mappingPattern,
     submittedAtClient: new Date().toISOString(),
-    appVersion: "2026-04-22",
+    appVersion: APP_VERSION,
     userAgent: navigator.userAgent,
     trials: state.responses
   };
@@ -397,10 +483,10 @@ function handleStart() {
   }
   const normalizedId = normalizeParticipantId(els.participantId.value);
   if (!normalizedId) {
-    els.introError.textContent = "Enter a participant ID like P01, P02, ..., P48.";
+    els.introError.textContent = "Enter the participant ID given by the researcher.";
     return;
   }
-  const assignment = ASSIGNMENT_LOOKUP[normalizedId];
+  const assignment = getAssignment(normalizedId);
   if (!assignment) {
     els.introError.textContent = "This participant ID is not in the assignment list.";
     return;
@@ -409,33 +495,47 @@ function handleStart() {
   state.participantId = normalizedId;
   state.participantInitials = els.participantName.value.trim();
   state.assignment = assignment;
-  state.trialIndex = 0;
+  state.trialIndex = -1;
+  state.inPractice = true;
   state.responses = [];
 
   els.introCard.classList.add("hidden");
   els.doneCard.classList.add("hidden");
   els.studyCard.classList.remove("hidden");
-  renderTrial();
+  renderCurrentStage();
+}
+
+function allAnswered() {
+  return Object.values(selectedAnswers).every(Boolean);
 }
 
 function handleTrialSubmit(event) {
   event.preventDefault();
   els.formError.textContent = "";
-  const allAnswered = Object.values(selectedAnswers).every(Boolean);
-  if (!allAnswered) {
+
+  if (!allAnswered()) {
     els.formError.textContent = "Please answer all four questions before continuing.";
     return;
   }
-  const trial = getCurrentTrial();
+
   const rtMs = performance.now() - state.trialStart;
+
+  if (state.inPractice) {
+    state.inPractice = false;
+    state.trialIndex = 0;
+    renderCurrentStage();
+    return;
+  }
+
+  const trial = getCurrentTrialDescriptor();
   const scored = scoreTrial(trial, selectedAnswers, rtMs);
   state.responses.push(scored);
 
   state.trialIndex += 1;
-  if (state.trialIndex >= 3) {
+  if (state.trialIndex >= TOTAL_REAL_TRIALS) {
     finishStudy();
   } else {
-    renderTrial();
+    renderCurrentStage();
   }
 }
 
@@ -447,4 +547,4 @@ els.startBtn.addEventListener("click", handleStart);
 els.questionForm.addEventListener("submit", handleTrialSubmit);
 els.restartBtn.addEventListener("click", handleRestart);
 
-updateStudyStatus("Ready to start");
+updateStudyStatus("Ready");

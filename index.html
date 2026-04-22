@@ -12,18 +12,21 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Study</p>
+        <p class="eyebrow">Department Study</p>
         <h1>Laboratory Report Interpretation Study</h1>
         <p class="subtitle">Balanced incomplete block study of laboratory report formats and interpretation efficiency</p>
       </div>
-      <div class="status-pill" id="statusPill">Not started</div>
+      <div class="status-pill" id="statusPill">Ready</div>
     </header>
 
     <main class="main-grid">
       <section class="card intro-card" id="introCard">
         <h2>Welcome</h2>
         <p>
-          You will see <strong>3 mock laboratory reports</strong>. For each report, answer 4 objective questions.
+          You will complete one short practice task and then <strong>3 recorded comparison tasks</strong>.
+          On each task, you will compare two mock laboratory reports shown in the same display format and decide which patient should be prioritized earlier.
+        </p>
+        <p>
           You do <strong>not</strong> need medical knowledge. Everything needed to answer is shown on the screen.
         </p>
 
@@ -34,35 +37,30 @@
           </div>
           <div class="info-box">
             <h3>Your task</h3>
-            <p>Read the displayed ranges and interpret the current result correctly</p>
+            <p>Compare the two displayed patients and choose the higher priority patient using the study rule</p>
           </div>
         </div>
 
         <div class="rule-box soft">
-          <h3>Study action rule</h3>
-          <table>
-            <thead>
-              <tr><th>Result category</th><th>Action class for this study</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Normal</td><td>Routine</td></tr>
-              <tr><td>Borderline</td><td>Discuss at regular follow-up</td></tr>
-              <tr><td>High or Very High</td><td>Prompt follow-up</td></tr>
-            </tbody>
-          </table>
+          <h3>Priority rule used in this study</h3>
+          <ol class="rule-list">
+            <li><strong>Current category first:</strong> Very High &gt; High &gt; Borderline &gt; Normal</li>
+            <li><strong>If tied, compare trend:</strong> worsening &gt; stable &gt; improving</li>
+            <li><strong>If still tied, compare numerical change:</strong> larger increase gets higher priority</li>
+          </ol>
         </div>
 
         <div class="consent-box">
           <label class="check-row">
             <input type="checkbox" id="consentCheckbox" />
-            <span>I agree to participate in this study.</span>
+            <span>I agree to participate in this class project study.</span>
           </label>
         </div>
 
         <div class="form-grid">
           <div>
             <label for="participantId">Participant ID</label>
-            <input id="participantId" type="text" placeholder="Example: P01" />
+            <input id="participantId" type="text" placeholder="Enter ID" />
             <p class="help-text">Use the ID given by the researcher.</p>
           </div>
           <div>
@@ -81,7 +79,7 @@
       <section class="card study-card hidden" id="studyCard">
         <div class="study-header">
           <div>
-            <p class="eyebrow">Trial <span id="trialCounter">1</span> of 3</p>
+            <p class="eyebrow" id="phaseLabel">Practice</p>
             <h2 id="caseTitle">Case title</h2>
             <p id="caseSubtitle" class="subtitle"></p>
           </div>
@@ -91,18 +89,15 @@
           </div>
         </div>
 
+        <div class="banner practice-banner hidden" id="practiceBanner">Practice only. This first task is not recorded.</div>
+
         <div class="rule-box sticky-rule">
-          <h3>Study action rule</h3>
-          <table>
-            <thead>
-              <tr><th>Result category</th><th>Action class for this study</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Normal</td><td>Routine</td></tr>
-              <tr><td>Borderline</td><td>Discuss at regular follow-up</td></tr>
-              <tr><td>High or Very High</td><td>Prompt follow-up</td></tr>
-            </tbody>
-          </table>
+          <h3>Priority rule used in this study</h3>
+          <ol class="rule-list compact">
+            <li><strong>Current category first:</strong> Very High &gt; High &gt; Borderline &gt; Normal</li>
+            <li><strong>If tied, compare trend:</strong> worsening &gt; stable &gt; improving</li>
+            <li><strong>If still tied, compare numerical change:</strong> larger increase gets higher priority</li>
+          </ol>
         </div>
 
         <div class="report-shell">
@@ -112,8 +107,8 @@
               <h3 id="formatLabel">T1</h3>
             </div>
             <div>
-              <p class="small-muted">Current question type</p>
-              <h3>Interpret the current result</h3>
+              <p class="small-muted">Response time</p>
+              <h3 id="timerBadge">Response time is being recorded.</h3>
             </div>
           </div>
           <div id="reportContainer"></div>
@@ -121,27 +116,27 @@
 
         <form id="questionForm" class="question-form">
           <div class="question-card">
-            <p class="question-title">1. What is the <strong>current</strong> result category?</p>
+            <p class="question-title">1. Which patient is currently in the higher category?</p>
             <div class="options-grid" id="q1Options"></div>
           </div>
 
           <div class="question-card">
-            <p class="question-title">2. Compared with the <strong>previous</strong> result, the current result is:</p>
+            <p class="question-title">2. If you compare trend only, which patient is worse?</p>
             <div class="options-grid" id="q2Options"></div>
           </div>
 
           <div class="question-card">
-            <p class="question-title">3. Is the <strong>current</strong> value inside the normal range?</p>
+            <p class="question-title">3. Which rule component decides the final answer?</p>
             <div class="options-grid" id="q3Options"></div>
           </div>
 
           <div class="question-card primary-endpoint-card">
-            <p class="question-title">4. Based on the study rule shown above, what is the correct <strong>action class</strong>?</p>
+            <p class="question-title">4. Which patient should be prioritized earlier?</p>
             <div class="options-grid" id="q4Options"></div>
           </div>
 
           <div class="button-row">
-            <button type="submit" class="primary-btn">Save and continue</button>
+            <button id="nextBtn" type="submit" class="primary-btn">Continue</button>
           </div>
           <p id="formError" class="error-text"></p>
         </form>
@@ -149,15 +144,15 @@
 
       <section class="card hidden" id="doneCard">
         <h2>All done</h2>
-        <p>Thank you. Your responses have been packaged and a backup file has been downloaded to your device.</p>
+        <p>Thank you. Your responses have been submitted and a JSON backup file has been downloaded to your device.</p>
         <div class="mini-grid">
           <div class="info-box">
             <h3>Participant ID</h3>
             <p id="doneParticipant"></p>
           </div>
           <div class="info-box">
-            <h3>Primary endpoint</h3>
-            <p>Correct action class on each trial</p>
+            <h3>Main recorded task</h3>
+            <p>Correct priority choice for each comparison trial</p>
           </div>
         </div>
         <div class="button-row">

@@ -374,3 +374,54 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   .topbar, .study-header, .report-meta { flex-direction: column; }
   .range-row { grid-template-columns: 1fr; }
 }
+
+
+.rule-list { margin: 0; padding-left: 1.1rem; color: var(--ink); }
+.rule-list li { margin: 0.35rem 0; }
+.rule-list.compact li { margin: 0.2rem 0; }
+.no-margin { margin: 0; }
+.banner { background: #fff4d8; border: 1px solid #f3dd8e; color: #725600; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-weight: 700; }
+.pair-shell { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 18px; }
+.patient-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: #fcfdff; }
+.patient-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom: 10px; }
+.compact-table { width:100%; border-collapse: collapse; }
+.compact-table th, .compact-table td { border-bottom: 1px solid #e8eef5; padding: 10px 8px; text-align:left; }
+.compact-table tr:last-child td { border-bottom: none; }
+.range-text { margin-top: 12px; }
+.flag-badge { display:inline-flex; align-items:center; justify-content:center; min-width: 34px; height: 28px; border-radius: 999px; font-weight: 800; font-size: 0.85rem; }
+.flag-N { background:#e7f6ec; color:#136b39; }
+.flag-B { background:#fff4d8; color:#8a6300; }
+.flag-H { background:#fde5e5; color:#a22d2d; }
+.flag-VH { background:#f8d6d6; color:#7d1d1d; }
+.range-bar-wrap { position: relative; padding-top: 10px; margin-top: 8px; }
+.range-bar { display:flex; height: 20px; border-radius: 999px; overflow:hidden; background:#eef3f7; border: 1px solid #dbe5ee; }
+.range-segment { height: 100%; }
+.seg-normal { background:#dff3e7; }
+.seg-borderline { background:#ffeab8; }
+.seg-high { background:#ffd2d2; }
+.seg-very-high { background:#f5b1b1; }
+.marker { position:absolute; top: 2px; width: 14px; height: 14px; border-radius: 50%; transform: translateX(-50%); border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.marker.previous { background:#17324d; }
+.marker.current { background:#0a6cc2; }
+.marker-label { position:absolute; top: 28px; transform: translateX(-50%); font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.legend-row { display:flex; flex-wrap:wrap; gap: 8px; margin-top: 44px; }
+.legend-chip { display:inline-flex; align-items:center; gap:6px; font-size:0.84rem; color: var(--muted); }
+.swatch { width: 11px; height:11px; border-radius:50%; display:inline-block; }
+.swatch-normal { background:#86d59f; }
+.swatch-borderline { background:#f2cf67; }
+.swatch-high { background:#f19494; }
+.swatch-very-high { background:#d55a5a; }
+.stats-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; margin-top: 14px; }
+.stats-grid > div { border:1px solid var(--line); border-radius: 12px; padding: 10px 12px; background:#fff; }
+.stat-k { display:block; font-size:0.8rem; color:var(--muted); margin-bottom: 4px; }
+.stat-v { font-weight: 700; }
+.cue-box { margin-top: 12px; border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 10px 12px; border-radius: 10px; font-size: 0.92rem; }
+.cue-box strong { display:block; margin-bottom: 4px; }
+.option-btn { width: 100%; background:#f4f7fb; color: var(--ink); border: 1px solid var(--line); }
+.option-btn.selected { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.question-form { display:grid; gap:14px; }
+.question-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background:#fbfdff; }
+.question-title { font-weight:700; margin-bottom: 12px; }
+.options-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px; }
+.primary-endpoint-card { border-color: #cde2f8; background:#f7fbff; }
+@media (max-width: 860px) { .pair-shell { grid-template-columns: 1fr; } .patient-head { flex-direction: column; } .marker-label { position: static; transform:none; display:block; margin-top:8px; } .legend-row { margin-top: 10px; } }
