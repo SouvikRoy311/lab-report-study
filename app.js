@@ -1,6 +1,6 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-27-comparison-v2-final-no-practice";
+const APP_VERSION = "2026-04-27-comparison-v2-final-no-practice-keyfix";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
@@ -52,7 +52,7 @@ const CASES = {
       { label: "Patient 1", previous: 82, current: 112, cue: "Current value moved from normal to borderline range." },
       { label: "Patient 2", previous: 118, current: 90, cue: "Current value moved from borderline back into normal range." }
     ],
-    answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
+    answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
   },
   B: {
     caseId: "B",
@@ -88,7 +88,7 @@ const CASES = {
       { label: "Patient 1", previous: 125, current: 185, cue: "Current value moved from borderline to high range." },
       { label: "Patient 2", previous: 160, current: 180, cue: "Current value remains in the high range and has increased from the previous value." }
     ],
-    answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
+    answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   }
 };
 
@@ -383,7 +383,7 @@ function downloadBackup(payload) {
 
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-comparison-bibd-v2",
+    studyId: "lab-report-comparison-bibd-v4-no-practice-keyfix",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
