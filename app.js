@@ -1,6 +1,6 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-27-comparison-v2-minimal-patch";
+const APP_VERSION = "2026-04-27-comparison-v2-final-no-practice";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
@@ -20,7 +20,7 @@ const QUESTION_OPTIONS = {
 const CASES = {
   P: {
     caseId: "P",
-    title: "Practice — Thyroid Stimulating Hormone",
+    title: "Practice Report — Thyroid Stimulating Hormone",
     subtitle: "Practice only. Learn the rule before the recorded trials begin.",
     testName: "Thyroid Stimulating Hormone (TSH)",
     unit: "mIU/L",
@@ -31,14 +31,14 @@ const CASES = {
       { label: "Very High", code: "VH", min: 20.1, max: 30.0 }
     ],
     patients: [
-      { label: "Patient 1", previous: 4.5, current: 4.8, cue: "Current value remains borderline and has increased from the previous value." },
-      { label: "Patient 2", previous: 5.5, current: 5.7, cue: "Current value remains borderline and has increased slightly from the previous value." }
+      { label: "Patient 1", previous: 4.4, current: 8.8, cue: "Current value remains borderline and has increased from the previous value." },
+      { label: "Patient 2", previous: 6.0, current: 8.0, cue: "Current value remains borderline and has increased from the previous value." }
     ],
     answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   },
   A: {
     caseId: "A",
-    title: "Case A — Fasting Glucose",
+    title: "Fasting Glucose",
     subtitle: "Compare the two patients using the priority rule shown below.",
     testName: "Fasting Glucose",
     unit: "mg/dL",
@@ -49,14 +49,14 @@ const CASES = {
       { label: "Very High", code: "VH", min: 200, max: 260 }
     ],
     patients: [
-      { label: "Patient 1", previous: 98, current: 102, cue: "Current value moved from normal to borderline range." },
-      { label: "Patient 2", previous: 105, current: 99, cue: "Current value moved from borderline back into normal range." }
+      { label: "Patient 1", previous: 82, current: 112, cue: "Current value moved from normal to borderline range." },
+      { label: "Patient 2", previous: 118, current: 90, cue: "Current value moved from borderline back into normal range." }
     ],
-    answers: { q1: "Patient 1", q2: "Same", q3: "Current category", q4: "Patient 1" }
+    answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   },
   B: {
     caseId: "B",
-    title: "Case B — Hemoglobin A1C",
+    title: "Hemoglobin A1C",
     subtitle: "Compare the two patients using the priority rule shown below.",
     testName: "Hemoglobin A1C",
     unit: "%",
@@ -67,14 +67,14 @@ const CASES = {
       { label: "Very High", code: "VH", min: 8.1, max: 10.0 }
     ],
     patients: [
-      { label: "Patient 1", previous: 6.3, current: 6.1, cue: "Current value remains borderline but has improved compared with the previous value." },
-      { label: "Patient 2", previous: 5.8, current: 6.0, cue: "Current value remains borderline and has worsened compared with the previous value." }
+      { label: "Patient 1", previous: 6.4, current: 5.8, cue: "Current value remains borderline but has improved compared with the previous value." },
+      { label: "Patient 2", previous: 5.7, current: 6.3, cue: "Current value remains borderline and has worsened compared with the previous value." }
     ],
     answers: { q1: "Same", q2: "Patient 2", q3: "Trend", q4: "Patient 2" }
   },
   C: {
     caseId: "C",
-    title: "Case C — LDL Cholesterol",
+    title: "LDL Cholesterol",
     subtitle: "Compare the two patients using the priority rule shown below.",
     testName: "LDL Cholesterol",
     unit: "mg/dL",
@@ -85,8 +85,8 @@ const CASES = {
       { label: "Very High", code: "VH", min: 190, max: 260 }
     ],
     patients: [
-      { label: "Patient 1", previous: 185, current: 195, cue: "Current value moved from high into very high range." },
-      { label: "Patient 2", previous: 165, current: 175, cue: "Current value remains in the high range and is above the previous value." }
+      { label: "Patient 1", previous: 125, current: 185, cue: "Current value moved from borderline to high range." },
+      { label: "Patient 2", previous: 160, current: 180, cue: "Current value remains in the high range and has increased from the previous value." }
     ],
     answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
   }
@@ -290,7 +290,6 @@ function updateStudyStatus(text) {
 }
 
 function getCurrentTrialDescriptor() {
-  if (state.inPractice) return { isPractice: true, format: "T3", caseId: "P", trialNumber: 0 };
   return state.assignment.trials[state.trialIndex];
 }
 
@@ -310,20 +309,20 @@ function renderCurrentStage() {
   els.formError.textContent = "";
   renderQuestionOptions();
 
-  els.phaseLabel.textContent = state.inPractice ? "Practice" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
-  if (els.trialCounter) els.trialCounter.textContent = state.inPractice ? "Practice only — not recorded" : `Recorded trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  els.phaseLabel.textContent = `Task ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  if (els.trialCounter) els.trialCounter.textContent = `Recorded task ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
   els.caseTitle.textContent = caseData.title;
   els.caseSubtitle.textContent = caseData.subtitle;
   els.formatLabel.textContent = `${formatInfo.code} — ${formatInfo.name}`;
-  els.timerBadge.textContent = state.inPractice ? "Practice only. Response time is not stored." : "Response time is being recorded.";
+  els.timerBadge.textContent = "Response time is being recorded.";
   els.reportContainer.innerHTML = renderReports(trial.format, caseData);
-  els.practiceBanner.classList.toggle("hidden", !state.inPractice);
+  els.practiceBanner.classList.add("hidden");
   els.participantSummary.textContent = `${state.participantId} · block ${state.assignment.blockGroup}`;
-  els.progressFill.style.width = state.inPractice ? "12%" : `${((state.trialIndex + 1) / TOTAL_REAL_TRIALS) * 100}%`;
-  els.nextBtn.textContent = state.inPractice ? "Begin recorded trials" : (state.trialIndex === TOTAL_REAL_TRIALS - 1 ? "Submit study" : "Continue");
+  els.progressFill.style.width = `${((state.trialIndex + 1) / TOTAL_REAL_TRIALS) * 100}%`;
+  els.nextBtn.textContent = state.trialIndex === TOTAL_REAL_TRIALS - 1 ? "Submit study" : "Continue";
 
   state.trialStart = performance.now();
-  updateStudyStatus(state.inPractice ? "Practice trial" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`);
+  updateStudyStatus(`Task ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`);
 }
 
 function scoreTrial(trial, answers, rtMs) {
@@ -424,8 +423,8 @@ function handleStart() {
   state.participantId = normalizedId;
   state.participantInitials = els.participantName.value.trim();
   state.assignment = assignment;
-  state.trialIndex = -1;
-  state.inPractice = true;
+  state.trialIndex = 0;
+  state.inPractice = false;
   state.responses = [];
 
   els.introCard.classList.add("hidden");
@@ -448,13 +447,6 @@ function handleTrialSubmit(event) {
   }
 
   const rtMs = performance.now() - state.trialStart;
-
-  if (state.inPractice) {
-    state.inPractice = false;
-    state.trialIndex = 0;
-    renderCurrentStage();
-    return;
-  }
 
   const trial = getCurrentTrialDescriptor();
   const scored = scoreTrial(trial, selectedAnswers, rtMs);

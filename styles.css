@@ -428,11 +428,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 
 /* ============================================================
-   Minimal patch: comparison-format display cleanup
-   Added 2026-04-27. Existing site layout is preserved.
+   Final display patch, 2026-04-27.
+   Only overrides report markers and full-word flags.
+   Existing page layout is preserved.
    ============================================================ */
 
-/* T2 flags now show full category words, so the badge must be wider. */
+/* Full labels: Normal / Borderline / High / Very High */
 .flag-badge {
   min-width: 86px;
   padding-left: 10px;
@@ -440,11 +441,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   white-space: nowrap;
 }
 
-/* Range bar: separate current and previous into distinct visual lanes. */
+/* Range bar label lanes: current label above, previous label below. */
 .patient-card-range .range-bar-wrap {
   position: relative;
   padding-top: 34px;
-  padding-bottom: 40px;
+  padding-bottom: 38px;
   margin-top: 12px;
   margin-bottom: 2px;
 }
@@ -463,34 +464,33 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   flex-shrink: 0;
 }
 
-/* Reset old dot marker behavior only inside range-format patient cards. */
+/* Both markers are on the bar. */
 .patient-card-range .marker {
   position: absolute;
+  top: 37px;
   transform: translateX(-50%);
   z-index: 3;
 }
 
-/* Current value: filled circle centered on the bar. */
+/* Current marker: filled dark circle. */
 .patient-card-range .marker-current {
-  top: 37px;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: #17324d;
+  background: #102a43;
   border: 3px solid #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.24);
 }
 
-/* Previous value: hollow diamond below the bar. */
+/* Previous marker: bold orange diamond, also on the bar. */
 .patient-card-range .marker-previous {
-  top: 63px;
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 2px;
-  background: #ffffff;
-  border: 2px solid #17324d;
+  background: #d98600;
+  border: 2px solid #ffffff;
   transform: translateX(-50%) rotate(45deg);
-  box-shadow: 0 2px 7px rgba(0,0,0,0.14);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.24);
 }
 
 .patient-card-range .marker-label {
@@ -508,24 +508,27 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   pointer-events: none;
 }
 
-/* Current label above, previous label below. */
 .patient-card-range .curr-label {
   top: 2px;
 }
 
 .patient-card-range .prev-label {
-  top: 82px;
+  top: 64px;
 }
 
 .patient-card-range .legend-row {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
-/* Override the old mobile rule that made marker labels static. */
+/* Override old mobile rule that made marker labels static. */
 @media (max-width: 860px) {
   .patient-card-range .range-bar-wrap {
     padding-top: 36px;
     padding-bottom: 44px;
+  }
+
+  .patient-card-range .marker {
+    top: 39px;
   }
 
   .patient-card-range .marker-label {
@@ -533,7 +536,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     transform: translateX(-50%);
     display: block;
     margin-top: 0;
-    max-width: 126px;
+    max-width: 128px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -543,10 +546,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   }
 
   .patient-card-range .prev-label {
-    top: 84px;
+    top: 68px;
   }
 
   .patient-card-range .legend-row {
-    margin-top: 10px;
+    margin-top: 12px;
   }
 }
