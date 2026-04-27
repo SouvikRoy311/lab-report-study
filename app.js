@@ -1,6 +1,6 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-22-comparison-v2";
+const APP_VERSION = "2026-04-27-comparison-v3-clean-display";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
@@ -16,6 +16,8 @@ const QUESTION_OPTIONS = {
   q3: ["Current category", "Trend", "Numerical change tie-breaker"],
   q4: ["Patient 1", "Patient 2", "Same priority"]
 };
+
+const NEUTRAL_RECORDED_SUBTITLE = "Compare the two patients using the priority rule shown below.";
 
 const CASES = {
   P: {
@@ -34,12 +36,12 @@ const CASES = {
       { label: "Patient 1", previous: 4.5, current: 4.8, cue: "Current value remains borderline and has increased from the previous value." },
       { label: "Patient 2", previous: 5.5, current: 5.7, cue: "Current value remains borderline and has increased slightly from the previous value." }
     ],
-    answers: { q1: "Same", q2: "Patient 1", q3: "Numerical change tie-breaker", q4: "Patient 1" }
+    answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   },
   A: {
     caseId: "A",
     title: "Case A — Fasting Glucose",
-    subtitle: "Borderline case. Category movement determines the priority.",
+    subtitle: NEUTRAL_RECORDED_SUBTITLE,
     testName: "Fasting Glucose",
     unit: "mg/dL",
     categories: [
@@ -57,7 +59,7 @@ const CASES = {
   B: {
     caseId: "B",
     title: "Case B — Hemoglobin A1C",
-    subtitle: "Both patients are currently borderline. Trend breaks the tie.",
+    subtitle: NEUTRAL_RECORDED_SUBTITLE,
     testName: "Hemoglobin A1C",
     unit: "%",
     categories: [
@@ -75,7 +77,7 @@ const CASES = {
   C: {
     caseId: "C",
     title: "Case C — LDL Cholesterol",
-    subtitle: "Both patients are worsening, but one enters the highest severity band.",
+    subtitle: NEUTRAL_RECORDED_SUBTITLE,
     testName: "LDL Cholesterol",
     unit: "mg/dL",
     categories: [
@@ -88,7 +90,7 @@ const CASES = {
       { label: "Patient 1", previous: 185, current: 195, cue: "Current value moved from high into very high range." },
       { label: "Patient 2", previous: 165, current: 175, cue: "Current value remains in the high range and is above the previous value." }
     ],
-    answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
+    answers: { q1: "Patient 1", q2: "Same", q3: "Current category", q4: "Patient 1" }
   }
 };
 
@@ -182,7 +184,8 @@ function rangeBounds(categories, patients) {
 }
 
 function valueToPercent(value, min, max) {
-  return ((value - min) / (max - min)) * 100;
+  if (max === min) return 50;
+  return Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
 }
 
 function formatNumber(value) {
@@ -206,11 +209,16 @@ function buildOptionButtons(container, qKey, options) {
   });
 }
 
+function rangeText(caseData) {
+  return caseData.categories
+    .map(c => `${c.label}: ${formatNumber(c.min)}–${formatNumber(c.max)}`)
+    .join(" · ");
+}
+
 function renderPlainTable(caseData, withFlags = false) {
-  const rangeText = caseData.categories.map(c => `${c.label}: ${formatNumber(c.min)}–${formatNumber(c.max)}`).join(" · ");
+  const displayedRanges = rangeText(caseData);
   const cards = caseData.patients.map(patient => {
     const currentCat = categoryForValue(patient.current, caseData.categories);
-    const trend = trendLabel(patient.previous, patient.current);
     return `
       <div class="patient-card patient-card-table">
         <div class="patient-head">
@@ -233,15 +241,11 @@ function renderPlainTable(caseData, withFlags = false) {
               <td>${formatNumber(patient.previous)}</td>
               <td><strong>${formatNumber(patient.current)}</strong></td>
               <td>${caseData.unit}</td>
-              ${withFlags ? `<td><span class="flag-badge flag-${currentCat.code}">${currentCat.code}</span></td>` : ""}
+              ${withFlags ? `<td><span class="flag-badge flag-${currentCat.code}">${currentCat.label}</span></td>` : ""}
             </tr>
           </tbody>
         </table>
-        <div class="stats-grid compact-gap">
-          <div><span class="stat-k">Current category</span><span class="stat-v">${currentCat.label}</span></div>
-          <div><span class="stat-k">Trend</span><span class="stat-v">${trend}</span></div>
-        </div>
-        <p class="small-muted range-text"><strong>Displayed ranges:</strong> ${rangeText}</p>
+        <p class="small-muted range-text"><strong>Displayed ranges:</strong> ${displayedRanges}</p>
       </div>
     `;
   }).join("");
@@ -251,16 +255,19 @@ function renderPlainTable(caseData, withFlags = false) {
 function renderRangePair(caseData, withCue = false) {
   const bounds = rangeBounds(caseData.categories, caseData.patients);
   const total = bounds.max - bounds.min;
+
   const cards = caseData.patients.map(patient => {
     const segments = caseData.categories.map(cat => {
       const width = ((cat.max - cat.min) / total) * 100;
       return `<div class="range-segment seg-${swatchClass(cat.label)}" style="width:${width}%"></div>`;
     }).join("");
+
     const previousPct = valueToPercent(patient.previous, bounds.min, bounds.max);
     const currentPct = valueToPercent(patient.current, bounds.min, bounds.max);
-    const currentCat = categoryForValue(patient.current, caseData.categories);
-    const trend = trendLabel(patient.previous, patient.current);
-    const legend = caseData.categories.map(cat => `<span class="legend-chip"><span class="swatch swatch-${swatchClass(cat.label)}"></span>${cat.label}</span>`).join("");
+    const legend = caseData.categories
+      .map(cat => `<span class="legend-chip"><span class="swatch swatch-${swatchClass(cat.label)}"></span>${cat.label}</span>`)
+      .join("");
+
     return `
       <div class="patient-card patient-card-range">
         <div class="patient-head">
@@ -269,22 +276,23 @@ function renderRangePair(caseData, withCue = false) {
             <p class="small-muted no-margin">${caseData.testName}</p>
           </div>
         </div>
-        <div class="range-bar-wrap">
+
+        <div class="range-bar-wrap" aria-label="${patient.label} ${caseData.testName} previous ${formatNumber(patient.previous)}, current ${formatNumber(patient.current)}">
+          <div class="marker-label curr-label" style="left:${currentPct}%">Current ${formatNumber(patient.current)}</div>
+          <div class="marker marker-current" style="left:${currentPct}%" title="Current ${formatNumber(patient.current)}"></div>
+
           <div class="range-bar">${segments}</div>
-          <div class="marker previous" style="left:${previousPct}%"></div>
-          <div class="marker current" style="left:${currentPct}%"></div>
-          <div class="marker-label prev-label" style="left:${previousPct}%">Prev ${formatNumber(patient.previous)}</div>
-          <div class="marker-label curr-label" style="left:${currentPct}%">Curr ${formatNumber(patient.current)}</div>
+
+          <div class="marker marker-previous" style="left:${previousPct}%" title="Previous ${formatNumber(patient.previous)}"></div>
+          <div class="marker-label prev-label" style="left:${previousPct}%">Previous ${formatNumber(patient.previous)}</div>
         </div>
+
         <div class="legend-row">${legend}</div>
-        <div class="stats-grid compact-gap">
-          <div><span class="stat-k">Current category</span><span class="stat-v">${currentCat.label}</span></div>
-          <div><span class="stat-k">Trend</span><span class="stat-v">${trend}</span></div>
-        </div>
         ${withCue ? `<div class="cue-box"><strong>Interpretive cue</strong><p class="no-margin">${patient.cue}</p></div>` : ""}
       </div>
     `;
   }).join("");
+
   return `<div class="pair-shell pair-range">${cards}</div>`;
 }
 
@@ -321,14 +329,21 @@ function renderCurrentStage() {
   renderQuestionOptions();
 
   els.phaseLabel.textContent = state.inPractice ? "Practice" : `Trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
-  if (els.trialCounter) els.trialCounter.textContent = state.inPractice ? "Practice only — not recorded" : `Recorded trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  if (els.trialCounter) {
+    els.trialCounter.textContent = state.inPractice
+      ? "Practice only — not recorded"
+      : `Recorded trial ${state.trialIndex + 1} of ${TOTAL_REAL_TRIALS}`;
+  }
+
   els.caseTitle.textContent = caseData.title;
   els.caseSubtitle.textContent = caseData.subtitle;
   els.formatLabel.textContent = `${formatInfo.code} — ${formatInfo.name}`;
   els.timerBadge.textContent = state.inPractice ? "Practice only. Response time is not stored." : "Response time is being recorded.";
   els.reportContainer.innerHTML = renderReports(trial.format, caseData);
   els.practiceBanner.classList.toggle("hidden", !state.inPractice);
-  els.participantSummary.textContent = `${state.participantId} · block ${state.assignment.blockGroup} · formats ${state.assignment.formatSet.join(", ")}`;
+
+  els.participantSummary.textContent = `${state.participantId} · block ${state.assignment.blockGroup}`;
+
   els.progressFill.style.width = state.inPractice ? "12%" : `${((state.trialIndex + 1) / TOTAL_REAL_TRIALS) * 100}%`;
   els.nextBtn.textContent = state.inPractice ? "Begin recorded trials" : (state.trialIndex === TOTAL_REAL_TRIALS - 1 ? "Submit study" : "Continue");
 
@@ -394,7 +409,7 @@ function downloadBackup(payload) {
 
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-comparison-bibd-v2",
+    studyId: "lab-report-comparison-bibd-v3",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
