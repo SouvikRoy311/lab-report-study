@@ -1,15 +1,15 @@
 {
   "checks": {
-    "no_practice": true,
-    "A_values": true,
-    "B_values": true,
-    "C_values": true,
+    "interval_function_present": true,
+    "render_uses_intervals": true,
+    "B_current_equal": true,
+    "C_current_equal": true,
     "A_key": true,
     "B_key": true,
     "C_key": true,
-    "strong_colors": true,
-    "markers": true,
-    "full_word_flags": true,
+    "vertical_markers": true,
+    "no_practice_flow": true,
+    "no_stats_boxes": true,
     "node_syntax_ok": true
   }
 }

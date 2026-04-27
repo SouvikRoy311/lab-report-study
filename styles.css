@@ -628,3 +628,89 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     top: 74px !important;
   }
 }
+
+
+/* ============================================================
+   V8 marker/scale fix.
+   Markers are now bold vertical lines on the bar.
+   The JS now uses midpoint category boundaries, so color segments
+   and marker positions are on the same numeric scale.
+   ============================================================ */
+
+/* Strong, visible range colors */
+.patient-card-range .range-bar {
+  height: 26px !important;
+  border: 1px solid #9fb2c7 !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45) !important;
+}
+
+.patient-card-range .seg-normal { background: #86dca7 !important; }
+.patient-card-range .seg-borderline { background: #ffd14f !important; }
+.patient-card-range .seg-high { background: #ff8c8c !important; }
+.patient-card-range .seg-very-high { background: #e84f4f !important; }
+
+.swatch-normal { background: #35bd69 !important; }
+.swatch-borderline { background: #eeb416 !important; }
+.swatch-high { background: #ed6666 !important; }
+.swatch-very-high { background: #d83838 !important; }
+
+/* Larger vertical line markers, both centered on the bar */
+.patient-card-range .range-bar-wrap {
+  padding-top: 40px !important;
+  padding-bottom: 50px !important;
+}
+
+.patient-card-range .marker {
+  position: absolute !important;
+  top: 34px !important;
+  width: 9px !important;
+  height: 40px !important;
+  border-radius: 999px !important;
+  transform: translateX(-50%) !important;
+  z-index: 8 !important;
+}
+
+/* Current value: navy vertical line */
+.patient-card-range .marker-current {
+  background: #002b5c !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 0 1px #002b5c, 0 3px 10px rgba(0,0,0,0.35) !important;
+}
+
+/* Previous value: orange vertical line */
+.patient-card-range .marker-previous {
+  background: #f28c00 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 0 1px #9a5700, 0 3px 10px rgba(0,0,0,0.35) !important;
+}
+
+/* Labels remain in separate lanes */
+.patient-card-range .marker-label {
+  border: 1px solid #9fb2c7 !important;
+  color: #0f2438 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(15,36,56,0.10) !important;
+}
+
+.patient-card-range .curr-label {
+  top: 0px !important;
+}
+
+.patient-card-range .prev-label {
+  top: 76px !important;
+}
+
+@media (max-width: 860px) {
+  .patient-card-range .range-bar-wrap {
+    padding-top: 42px !important;
+    padding-bottom: 54px !important;
+  }
+
+  .patient-card-range .marker {
+    top: 36px !important;
+  }
+
+  .patient-card-range .prev-label {
+    top: 80px !important;
+  }
+}

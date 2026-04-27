@@ -1,6 +1,6 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-27-final-clear-values-v6";
+const APP_VERSION = "2026-04-27-final-v8-markerfix";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
@@ -67,8 +67,8 @@ const CASES = {
       { label: "Very High", code: "VH", min: 8.1, max: 10.0 }
     ],
     patients: [
-      { label: "Patient 1", previous: 6.4, current: 5.7, cue: "Current value remains borderline but has improved compared with the previous value." },
-      { label: "Patient 2", previous: 5.7, current: 6.4, cue: "Current value remains borderline and has worsened compared with the previous value." }
+      { label: "Patient 1", previous: 6.4, current: 6.0, cue: "Current value remains borderline but has improved compared with the previous value." },
+      { label: "Patient 2", previous: 5.7, current: 6.0, cue: "Current value remains borderline and has worsened compared with the previous value." }
     ],
     answers: { q1: "Same", q2: "Patient 2", q3: "Trend", q4: "Patient 2" }
   },
@@ -86,7 +86,7 @@ const CASES = {
     ],
     patients: [
       { label: "Patient 1", previous: 100, current: 188, cue: "Current value moved from borderline to high range." },
-      { label: "Patient 2", previous: 165, current: 178, cue: "Current value remains in the high range and has increased from the previous value." }
+      { label: "Patient 2", previous: 160, current: 188, cue: "Current value remains in the high range and has increased from the previous value." }
     ],
     answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   }
@@ -186,6 +186,18 @@ function valueToPercent(value, min, max) {
   return Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
 }
 
+function categoryDisplayIntervals(categories) {
+  return categories.map((cat, index) => {
+    const start = index === 0
+      ? cat.min
+      : (categories[index - 1].max + cat.min) / 2;
+    const end = index === categories.length - 1
+      ? cat.max
+      : (cat.max + categories[index + 1].min) / 2;
+    return { cat, start, end };
+  });
+}
+
 function formatNumber(value) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
@@ -245,11 +257,15 @@ function renderPlainTable(caseData, withFlags = false) {
 }
 
 function renderRangePair(caseData, withCue = false) {
-  const bounds = rangeBounds(caseData.categories, caseData.patients);
+  const intervals = categoryDisplayIntervals(caseData.categories);
+  const bounds = {
+    min: intervals[0].start,
+    max: intervals[intervals.length - 1].end
+  };
   const total = bounds.max - bounds.min;
   const cards = caseData.patients.map(patient => {
-    const segments = caseData.categories.map(cat => {
-      const width = ((cat.max - cat.min) / total) * 100;
+    const segments = intervals.map(({ cat, start, end }) => {
+      const width = ((end - start) / total) * 100;
       return `<div class="range-segment seg-${swatchClass(cat.label)}" style="width:${width}%"></div>`;
     }).join("");
     const previousPct = valueToPercent(patient.previous, bounds.min, bounds.max);
@@ -383,7 +399,7 @@ function downloadBackup(payload) {
 
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-comparison-bibd-final-clear-values-v6",
+    studyId: "lab-report-comparison-bibd-final-v8-markerfix",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
