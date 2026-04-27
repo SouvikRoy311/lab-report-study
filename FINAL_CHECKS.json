@@ -1,26 +1,15 @@
 {
   "checks": {
-    "T1_to_T4_present": true,
-    "no_practice_flow": true,
-    "welcome_no_practice": true,
-    "no_case_letter_titles": true,
-    "no_stats_grid_in_app": true,
-    "full_word_flags": true,
-    "participant_summary_no_format_set": true,
-    "home_button": true,
-    "assignments_48_participants": true,
-    "G1_12": true,
-    "G2_12": true,
-    "G3_12": true,
-    "G4_12": true,
-    "config_has_live_url": true,
-    "node_syntax_ok": true,
+    "no_practice": true,
+    "A_values": true,
+    "B_values": true,
+    "C_values": true,
     "A_key": true,
     "B_key": true,
-    "C_key": true
-  },
-  "syntax": {
-    "returncode": 0,
-    "stderr": ""
+    "C_key": true,
+    "strong_colors": true,
+    "markers": true,
+    "full_word_flags": true,
+    "node_syntax_ok": true
   }
 }

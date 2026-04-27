@@ -553,3 +553,78 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     margin-top: 12px;
   }
 }
+
+
+/* ============================================================
+   Clear-value visual contrast patch, v6.
+   Stronger range colors and clearer on-bar markers.
+   ============================================================ */
+
+.patient-card-range .range-bar {
+  height: 24px;
+  border: 1px solid #b9c9dc;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+}
+
+/* Stronger category colors on the bar */
+.patient-card-range .seg-normal { background: #9ee6b8 !important; }
+.patient-card-range .seg-borderline { background: #ffd866 !important; }
+.patient-card-range .seg-high { background: #ff9696 !important; }
+.patient-card-range .seg-very-high { background: #e95c5c !important; }
+
+/* Matching stronger legend dots */
+.swatch-normal { background: #52c77d !important; }
+.swatch-borderline { background: #f4bf28 !important; }
+.swatch-high { background: #ef7272 !important; }
+.swatch-very-high { background: #d84141 !important; }
+
+/* Both markers sit on the bar, larger and high contrast */
+.patient-card-range .marker {
+  top: 38px !important;
+  z-index: 5;
+}
+
+.patient-card-range .marker-current {
+  width: 19px !important;
+  height: 19px !important;
+  background: #05284f !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 0 0 1px #05284f, 0 3px 9px rgba(0,0,0,0.30) !important;
+}
+
+.patient-card-range .marker-previous {
+  width: 18px !important;
+  height: 18px !important;
+  background: #f28c00 !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 0 0 1px #8a4b00, 0 3px 9px rgba(0,0,0,0.30) !important;
+}
+
+.patient-card-range .marker-label {
+  border: 1px solid #b8c8da !important;
+  color: #0f2438 !important;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(15,36,56,0.08);
+}
+
+.patient-card-range .curr-label {
+  top: 0px !important;
+}
+
+.patient-card-range .prev-label {
+  top: 70px !important;
+}
+
+.patient-card-range .range-bar-wrap {
+  padding-top: 38px !important;
+  padding-bottom: 48px !important;
+}
+
+@media (max-width: 860px) {
+  .patient-card-range .marker {
+    top: 40px !important;
+  }
+  .patient-card-range .prev-label {
+    top: 74px !important;
+  }
+}

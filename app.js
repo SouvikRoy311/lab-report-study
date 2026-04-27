@@ -1,6 +1,6 @@
 const STUDY_CONFIG = window.STUDY_CONFIG || { APPS_SCRIPT_URL: "" };
 
-const APP_VERSION = "2026-04-27-comparison-v2-final-no-practice-keyfix";
+const APP_VERSION = "2026-04-27-final-clear-values-v6";
 const TOTAL_REAL_TRIALS = 3;
 
 const FORMAT_META = {
@@ -49,8 +49,8 @@ const CASES = {
       { label: "Very High", code: "VH", min: 200, max: 260 }
     ],
     patients: [
-      { label: "Patient 1", previous: 82, current: 112, cue: "Current value moved from normal to borderline range." },
-      { label: "Patient 2", previous: 118, current: 90, cue: "Current value moved from borderline back into normal range." }
+      { label: "Patient 1", previous: 78, current: 120, cue: "Current value moved from normal to borderline range." },
+      { label: "Patient 2", previous: 122, current: 82, cue: "Current value moved from borderline back into normal range." }
     ],
     answers: { q1: "Patient 1", q2: "Patient 1", q3: "Current category", q4: "Patient 1" }
   },
@@ -67,8 +67,8 @@ const CASES = {
       { label: "Very High", code: "VH", min: 8.1, max: 10.0 }
     ],
     patients: [
-      { label: "Patient 1", previous: 6.4, current: 5.8, cue: "Current value remains borderline but has improved compared with the previous value." },
-      { label: "Patient 2", previous: 5.7, current: 6.3, cue: "Current value remains borderline and has worsened compared with the previous value." }
+      { label: "Patient 1", previous: 6.4, current: 5.7, cue: "Current value remains borderline but has improved compared with the previous value." },
+      { label: "Patient 2", previous: 5.7, current: 6.4, cue: "Current value remains borderline and has worsened compared with the previous value." }
     ],
     answers: { q1: "Same", q2: "Patient 2", q3: "Trend", q4: "Patient 2" }
   },
@@ -85,8 +85,8 @@ const CASES = {
       { label: "Very High", code: "VH", min: 190, max: 260 }
     ],
     patients: [
-      { label: "Patient 1", previous: 125, current: 185, cue: "Current value moved from borderline to high range." },
-      { label: "Patient 2", previous: 160, current: 180, cue: "Current value remains in the high range and has increased from the previous value." }
+      { label: "Patient 1", previous: 100, current: 188, cue: "Current value moved from borderline to high range." },
+      { label: "Patient 2", previous: 165, current: 178, cue: "Current value remains in the high range and has increased from the previous value." }
     ],
     answers: { q1: "Same", q2: "Same", q3: "Numerical change tie-breaker", q4: "Patient 1" }
   }
@@ -383,7 +383,7 @@ function downloadBackup(payload) {
 
 function finishStudy() {
   const payload = {
-    studyId: "lab-report-comparison-bibd-v4-no-practice-keyfix",
+    studyId: "lab-report-comparison-bibd-final-clear-values-v6",
     participantId: state.participantId,
     participantInitials: state.participantInitials,
     participantNumber: state.assignment.participantNumber,
